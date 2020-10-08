@@ -103,9 +103,9 @@ pthread_rwlock_t rwlock;
 void *Thread_Operation(void *thread_id) {
 	int count_tot = 0;
 
-    int finished_member = 0;
-    int finished_insert = 0;
-    int delete_finished = 0;
+    int f_member = 0;
+    int f_insert = 0;
+    int f_delete = 0;
 
     while (count_tot < m) {
         int random_value = rand() % MAX_RANDOM;
@@ -113,31 +113,34 @@ void *Thread_Operation(void *thread_id) {
         int random_select = rand() % 3;
 
 		//cout<<random_select<<" "<<count_member<<" "<<count_insert<<" "<<count_delete<<endl;
-        if (random_select == 0 && finished_member == 0) {
+        if (random_select == 0 && f_member == 0) {
             pthread_rwlock_rdlock(&rwlock);
             if (count_member < m_member) {
                 Member(random_value, head);
                 count_member++;
-            }else
-                finished_member =1;
+            }
+            else
+                f_member =1;
             pthread_rwlock_unlock(&rwlock);
         }
-        if (random_select == 1 && finished_insert == 0) {
+        if (random_select == 1 && f_insert == 0) {
             pthread_rwlock_rdlock(&rwlock);
             if (count_insert < m_insert) {
                 Insert(random_value, &head);
                 count_insert++;
-            }else
-                finished_insert =1;
+            }
+            else
+                f_insert =1;
             pthread_rwlock_unlock(&rwlock);
         }
-        else if (random_select == 2 && delete_finished == 0) {
+        else if (random_select == 2 && f_delete == 0) {
             pthread_rwlock_wrlock(&rwlock);
             if (count_delete < m_delete) {
                 Delete(random_value, &head);
                 count_delete++;
-            }else
-                delete_finished =1;
+            }
+            else
+                f_delete =1;
             pthread_rwlock_unlock(&rwlock);
         }
         count_tot++;
