@@ -6,7 +6,6 @@
 #include <iostream>
 
 #define MAX_RANDOM 65535
-#define MR_DIVISOR ((double) 4294967291U)
 
 using namespace std;
 
@@ -82,9 +81,9 @@ int n = 1000; //Numero de Nodos
 int m = 100000; //Numero de operaciones
 int thread_count = 1; //Numero de threads en ejecucion
 
-float mMember = 0.80;
-float mInsert = 0.1;
-float mDelete = 0.1;
+float mMember = 0.999;
+float mInsert = 0.0005;
+float mDelete = 0.0005;
 
 //Operaciones Total
 int m_member = mMember*m;
@@ -152,6 +151,7 @@ void *Thread_Operation(void *thread_id) {
 
 
 int main(int argc, char *argv[]) {
+    double start_time, finish_time, time_elapsed;
     int i = 0;
     while (i < n) {
         if (Insert(rand() % MAX_RANDOM, &head) == 1)
@@ -160,12 +160,17 @@ int main(int argc, char *argv[]) {
     pthread_mutex_init(&mutex, NULL);
 
     pthread_t ids[thread_count];
+
+	start_time = clock();
     for (int i=0; i < thread_count; i++) {
         pthread_create(&ids[i], NULL, Thread_Operation, &i);
     }
     for (int i=0; i < thread_count; i++) {
         pthread_join(ids[i], NULL);
     }
+    finish_time = clock();
+	time_elapsed = (finish_time - start_time)/CLOCKS_PER_SEC;
+	printf("%.10f\n", time_elapsed);
 
     pthread_mutex_destroy(&mutex);
 	cout<<m_member<<" "<<m_insert<<" "<<m_delete<<endl;
