@@ -4,7 +4,7 @@
 #include <math.h>
 #include <pthread.h>
 #include <iostream>
-#include <time.h>
+#include "timer.h"
 
 #define MAX_RANDOM 65535
 
@@ -184,7 +184,7 @@ void *Thread_Operation(void *thread_id) {
 
 int main(int argc, char *argv[]) {
     double start_time, finish_time, time_elapsed;
-
+    double start, finish;
     int i = 0;
     while (i < n) {
         if (Insert(rand() % MAX_RANDOM, &head) == 1)
@@ -194,7 +194,8 @@ int main(int argc, char *argv[]) {
     pthread_rwlock_init(&rwlock, NULL);
 
     pthread_t ids[thread_count];
-	start_time = clock();
+	//start_time = clock();
+    GET_TIME(start);
 
     for (int i=0; i < thread_count; i++) {
         pthread_create(&ids[i], NULL, Thread_Operation, &i);
@@ -202,9 +203,12 @@ int main(int argc, char *argv[]) {
     for (int i=0; i < thread_count; i++) {
         pthread_join(ids[i], NULL);
     }
-    finish_time = clock();
-	time_elapsed = (finish_time - start_time)/CLOCKS_PER_SEC;
-	printf("%.10f\n", time_elapsed);
+    //finish_time = clock();
+    GET_TIME(finish);
+    printf("tiempo = %e s\n", finish - start);
+
+	//time_elapsed = (finish_time - start_time)/CLOCKS_PER_SEC;
+	//printf("%.10f\n", time_elapsed);
     pthread_rwlock_destroy(&rwlock);
 	cout<<m_member<<" "<<m_insert<<" "<<m_delete<<endl;
 
